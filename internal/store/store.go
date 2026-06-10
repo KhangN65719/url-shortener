@@ -1,28 +1,40 @@
 package store
 
 import (
-	"sync"
+	"github.com/glebarez/sqlite"
+	"gorm.io/gorm"
 )
 
-type Data struct {
-	mu     sync.RWMutex
-	urlMap map[string]string
+type URL struct {
+	ShortCode string `gorm:"primaryKey"`
+	LongUrl   string
 }
 
-func New() *Data {
-	return &Data{
-		urlMap: make(map[string]string),
+type Store struct {
+	db *gorm.DB
+}
+
+func New() *Store {
+	db, err := gorm.Open(sqlite.Open("urls.db"), &gorm.Config{})
+	if err != nil {
+		return nil
 	}
+	db.AutoMigrate(&URL{})
+	return &Store{db: db}
 }
 
-func (data *Data) Write(code, longUrl string) {
-	data.mu.Lock()
-	defer data.mu.Unlock()
-	data.urlMap[code] = longUrl
+func (data *Store) Write(code, longUrl string) {
+	urlStruct := URL{code, longUrl}
+	data.db.Create(&urlStruct)
 }
 
-func (data *Data) Read(code string) string {
-	data.mu.RLock()
-	defer data.mu.RUnlock()
-	return data.urlMap[code]
+func (data *Store) Read(code string) string {
+	urlStruct := URL{}
+	result := data.db.First(&urlStruct, "short_code = ?", code)
+
+	if result.Error != nil {
+		return ""
+	}
+
+	return urlStruct.LongUrl
 }

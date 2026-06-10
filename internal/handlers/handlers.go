@@ -12,7 +12,10 @@ type Links struct {
 	Url string `json:"url"`
 }
 
-var db = store.New()
+type Handler struct {
+	Store *store.Store
+}
+
 var codeLen uint8 = 6
 
 func generateCode(n int) string {
@@ -24,7 +27,7 @@ func generateCode(n int) string {
 	return string(b)
 }
 
-func Shorten(w http.ResponseWriter, r *http.Request) {
+func (handler *Handler) Shorten(w http.ResponseWriter, r *http.Request) {
 	var myLink Links
 	defer r.Body.Close()
 	err := json.NewDecoder(r.Body).Decode(&myLink)
@@ -35,13 +38,13 @@ func Shorten(w http.ResponseWriter, r *http.Request) {
 	}
 
 	code := generateCode(int(codeLen))
-	db.Write(code, myLink.Url)
+	handler.Store.Write(code, myLink.Url)
 	fmt.Fprintf(w, "localhost:6767/%s\n", code)
 }
 
-func Retrieve(w http.ResponseWriter, r *http.Request) {
+func (handler *Handler) Retrieve(w http.ResponseWriter, r *http.Request) {
 	code := r.PathValue("code")
-	originalUrl := db.Read(code)
+	originalUrl := handler.Store.Read(code)
 	if originalUrl == "" {
 		http.Error(w, "short link not found", http.StatusNotFound)
 		return
