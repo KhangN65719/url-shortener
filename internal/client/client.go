@@ -8,21 +8,21 @@ import (
 	"net/http"
 )
 
-type Link struct{
-	Url string `json:"url"`
+type Link struct {
+	URL string `json:"url"`
 }
 
-func SendURL(url string){
-	jsonInstance := Link{Url : url}
+func SendURL(url string) {
+	jsonInstance := Link{URL: url}
 	jsonBody, err := json.Marshal(jsonInstance)
 
-	if err != nil{
+	if err != nil {
 		return
 	}
 
 	req, err := http.NewRequest("POST", "http://localhost:6767/shorten", bytes.NewReader(jsonBody))
-	
-	if err != nil{
+
+	if err != nil {
 		return
 	}
 
@@ -31,7 +31,7 @@ func SendURL(url string){
 	client := &http.Client{}
 	resp, err := client.Do(req)
 
-	if err != nil{
+	if err != nil {
 		return
 	}
 
@@ -39,7 +39,7 @@ func SendURL(url string){
 
 	body, err := io.ReadAll(resp.Body)
 
-	if err != nil{
+	if err != nil {
 		return
 	}
 
