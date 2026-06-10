@@ -1,2 +1,3 @@
 cmd/server/server
 cmd/shorten/shorten
+urls.db
