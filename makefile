@@ -1,14 +1,15 @@
-.PHONY: build 
+.PHONY: build run-server clean 
 
-build:
-		go fmt ./...
-		go vet ./...
-		go build -o cmd/server/server ./cmd/server
-		go build -o cmd/shorten/shorten ./cmd/shorten
+build: clean
+	go fmt ./...
+	go vet ./...
+	go build -o cmd/server/server ./cmd/server
+	go build -o cmd/shorten/shorten ./cmd/shorten
 
-run server: 
-		cmd/server/server
+run-server: build  
+	./cmd/server/server
 
 clean:
-	rm cmd/server/server
-	rm cmd/shorten/shorten
+	rm -f cmd/server/server
+	rm -f cmd/shorten/shorten
+	
