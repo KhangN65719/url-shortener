@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+
 	"github.com/KhangN65719/url-shortener/internal/store"
 )
 
@@ -31,6 +32,12 @@ func (handler *Handler) Shorten(w http.ResponseWriter, r *http.Request) {
 	var myLink Links
 	defer r.Body.Close()
 	err := json.NewDecoder(r.Body).Decode(&myLink)
+
+	existingCode := handler.Store.FindByLongUrl(myLink.Url)
+	if existingCode != "" {
+		fmt.Fprintf(w, "localhost:6767/%s\n", existingCode)
+		return
+	}
 
 	if err != nil {
 		http.Error(w, "invalid request body", http.StatusBadRequest)

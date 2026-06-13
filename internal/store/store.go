@@ -38,3 +38,12 @@ func (data *Store) Read(code string) string {
 
 	return urlStruct.LongUrl
 }
+
+func (data *Store) FindByLongUrl(longUrl string) string {
+	urlStruct := URL{}
+	result := data.db.Where("long_url = ?", longUrl).First(&urlStruct)
+	if result.Error != nil {
+		return ""
+	}
+	return urlStruct.ShortCode
+}
