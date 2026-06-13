@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/KhangN65719/url-shortener/internal/store"
 	"math/rand"
 	"net/http"
+	"github.com/KhangN65719/url-shortener/internal/store"
 )
 
 type Links struct {

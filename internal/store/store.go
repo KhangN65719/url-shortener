@@ -15,7 +15,7 @@ type Store struct {
 }
 
 func New() *Store {
-	db, err := gorm.Open(sqlite.Open("urls.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("data/urls.db"), &gorm.Config{})
 	if err != nil {
 		return nil
 	}
